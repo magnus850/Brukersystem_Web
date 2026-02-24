@@ -15,8 +15,14 @@
     const data = await respons.json();
     tillatelse = data.tillatelse;
     suksess = data.suksess;
-    if (suksess) {
-      goto("/admin");
+    if (suksess && tillatelse == "admin") {
+      goto(
+        `/admin?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}`,
+      );
+    } else if (suksess && tillatelse == "bruker") {
+      goto(
+        `/bruker?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}`,
+      );
     }
   }
 </script>

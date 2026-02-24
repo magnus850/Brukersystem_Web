@@ -19,7 +19,7 @@ CORS(app)
 
 def bruker_sjekk(brukernavn, passord):
     cur.execute(
-        'SELECT id, passord, tillatelse FROM brukere WHERE bruker =%s AND passord = %s',
+        'SELECT passord, tillatelse FROM brukere WHERE bruker =%s AND passord = %s',
         (brukernavn, passord))
     resultat = cur.fetchone()
     if resultat == None:
@@ -27,7 +27,7 @@ def bruker_sjekk(brukernavn, passord):
         return suksess, None 
     elif resultat: 
         resultat_liste = list(resultat)
-        tillatelse = resultat_liste[2]
+        tillatelse = resultat_liste[1]
         suksess = True
         return suksess, tillatelse
     
@@ -36,14 +36,23 @@ def registrer_bruker(brukernavn, passord):
     cur.execute('select bruker from brukere where bruker = %s',
             (brukernavn,))
     if cur.fetchone() != None:
-        return 'Brukernavn er tatt, velg et annet'
+        return 'Brukernavn er tatt, velg et annet', None, None
     elif cur.fetchone() == None: 
         cur.execute(
         'insert into brukere (bruker, passord) values (%s, %s)',
         (brukernavn, passord))
         conn.commit()
-        return f"Du har lagd en ny bruker kalt: {brukernavn}"
+        cur.execute(
+            'select tillatelse from brukere where bruker =%s',
+            (brukernavn,))
+        tillatelse = cur.fetchone()
+        return None, brukernavn, tillatelse
 
+def alle_brukere(brukernavn):
+    cur.execute("select id, bruker, tillatelse from brukere where bruker !=%s",
+                (brukernavn,))
+    resultat = cur.fetchall()
+    if resultat: return resultat
     
 #routes
 @app.route("/")
@@ -69,8 +78,16 @@ def registrerings_side():
     data = request.json
     brukernavn = (data.get('brukernavn'))
     passord = (data.get('passord'))
-    melding, tillatelse = registrer_bruker(brukernavn, passord)
-    return jsonify (melding, tillatelse)
+    melding, brukernavn, tillatelse = registrer_bruker(brukernavn, passord)
+    return jsonify ({'melding': melding, 'tillatelse': tillatelse, 'brukernavn': brukernavn})
+
+#brukeroversikt for admins
+@app.route("/brukerdb", methods=['POST'])
+def hent_brukere():
+    data = request.json
+    brukernavn = (data.get('brukernavn'))
+    brukere = alle_brukere(brukernavn)
+    return jsonify ({'brukere': brukere})
 
 if __name__ == "__main__":
     app.run(debug=True)

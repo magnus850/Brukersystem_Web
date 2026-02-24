@@ -1,10 +1,14 @@
 <script>
+  import { goto } from "$app/navigation";
+
   const max_br_lengde = 15;
   const min_br_lengde = 5;
   const max_pa_lengde = 24;
   const min_pa_lengde = 8;
   let brukernavn = "";
   let passord = "";
+  let tillatelse = "";
+  let melding = "";
 
   async function registrering() {
     const respons = await fetch("http://127.0.0.1:5000/regdata", {
@@ -12,28 +16,50 @@
       body: JSON.stringify({ brukernavn, passord }),
       headers: { "Content-Type": "application/json" },
     });
-    const text = await respons.text();
-    console.log("Respons: ", { text });
+    const data = await respons.json();
+    melding = data.melding;
+    if (melding == "Brukernavn er tatt, velg et annet") {
+      string1 = melding;
+      return;
+    }
+    tillatelse = data.tillatelse;
+    if (tillatelse == "admin") {
+      goto(
+        `/admin?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}`,
+      );
+    } else if (tillatelse == "bruker") {
+      goto(
+        `/bruker?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}`,
+      );
+    }
+  }
+
+  let string1 = "";
+  let string2 = "";
+  function sjekk_lengde() {
+    string1 = "";
+    string2 = "";
+    if (
+      brukernavn_lengde > max_br_lengde ||
+      brukernavn_lengde < min_br_lengde
+    ) {
+      string1 = `Hold brukernavnlengde innen 5-15 tegn`;
+    }
+    if (passord_lengde > max_pa_lengde || passord_lengde < min_pa_lengde) {
+      string2 = `Hold passordlengde innen 8-24 tegn`;
+      return;
+    }
+    if (!string1 && !string2) {
+      registrering();
+    }
   }
   let brukernavn_text = "";
   $: brukernavn_lengde = brukernavn_text.length;
   $: brukernavn_text = brukernavn;
 
-  let passord_text;
+  let passord_text = "";
   $: passord_lengde = passord_text.length;
   $: passord_text = passord;
-
-  function sjekk_lengde() {
-    if (
-      brukernavn_lengde > max_br_lengde ||
-      brukernavn_lengde < min_br_lengde
-    ) {
-      console.log("Hold brukernavnlengde innen 5-15 tegn");
-    }
-    if (passord_lengde > max_pa_lengde || passord_lengde < min_pa_lengde) {
-      console.log("Hold passordlengde innen 8-24 tegn");
-    } else registrering();
-  }
 </script>
 
 <h1>Registrer deg</h1>
@@ -44,6 +70,9 @@
 <input type="text" id="passord" bind:value={passord} />
 
 <button on:click={sjekk_lengde}>Registrer</button>
+<br />
+<p>{@html string1}</p>
+<p>{@html string2}</p>
 <br />
 <a href="/">Hjem</a>
 <br />
