@@ -34,7 +34,7 @@
 <input type="text" id="brukernavn" bind:value={brukernavn} />
 <br />
 <label for="passord">Passord:</label>
-<input type="text" id="passord" bind:value={passord} />
+<input type="password" id="passord" bind:value={passord} />
 
 <button on:click={logg_inn}>Logg inn</button>
 <br />

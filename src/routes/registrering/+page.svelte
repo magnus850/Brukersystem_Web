@@ -9,6 +9,7 @@
   let passord = "";
   let tillatelse = "";
   let melding = "";
+  let id = "";
 
   async function registrering() {
     const respons = await fetch("http://127.0.0.1:5000/regdata", {
@@ -23,13 +24,14 @@
       return;
     }
     tillatelse = data.tillatelse;
+    id = data.id;
     if (tillatelse == "admin") {
       goto(
         `/admin?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}&id=${encodeURIComponent(id)}`,
       );
     } else if (tillatelse == "bruker") {
       goto(
-        `/bruker?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}`,
+        `/bruker?brukernavn=${encodeURIComponent(brukernavn)}&tillatelse=${encodeURIComponent(tillatelse)}&id=${encodeURIComponent(id)}`,
       );
     }
   }
@@ -67,7 +69,7 @@
 <input type="text" id="brukernavn" bind:value={brukernavn} />
 <br />
 <label for="passord">Passord:</label>
-<input type="text" id="passord" bind:value={passord} />
+<input type="password" id="passord" bind:value={passord} />
 
 <button on:click={sjekk_lengde}>Registrer</button>
 <br />
