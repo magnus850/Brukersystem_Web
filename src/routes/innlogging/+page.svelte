@@ -37,7 +37,3 @@
 <input type="password" id="passord" bind:value={passord} />
 
 <button on:click={logg_inn}>Logg inn</button>
-<br />
-<a href="/">Hjem</a>
-<br />
-<a href="/registrering">Registrer deg</a>

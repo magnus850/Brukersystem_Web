@@ -75,7 +75,3 @@
 <br />
 <p>{@html string1}</p>
 <p>{@html string2}</p>
-<br />
-<a href="/">Hjem</a>
-<br />
-<a href="/innlogging">Logg inn</a>
