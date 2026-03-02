@@ -250,4 +250,7 @@ a.btn.secondary {
 }
 
 /* ensure anchor buttons inside actions don't get compressed by surrounding layout */
-.actions a.btn, .actions a.btn.secondary { flex: 0 0 auto; }
+.actions a.btn,
+.actions a.btn.secondary {
+  flex: 0 0 auto;
+}
