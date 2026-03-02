@@ -11,7 +11,13 @@ pip3 install flask flask-cors mariadb python-dotenv
 Åpne et nytt terminalvindu, logg inn på mariadb og kjør disse kommandoene:
 create database brukerdb;
 use brukerdb;
-create table brukere ;
+CREATE TABLE brukere (
+    id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    bruker VARCHAR(15) NOT NULL,
+    passord VARCHAR(24) NOT NULL,
+    tillatelse VARCHAR(20) NOT NULL DEFAULT 'bruker'
+);
+insert into brukere (bruker, passord, tillatelse) values ('admin123','passord123', 'admin');
 
 touch .env
 nano .env
